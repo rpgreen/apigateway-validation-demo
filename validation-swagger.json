@@ -1,0 +1,158 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "API Gateway - Request Validation Demo"
+  },
+  "schemes": [
+    "https"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "x-amazon-apigateway-request-validators" : {
+    "full" : {
+      "validateRequestBody" : true,
+      "validateRequestParameters" : true
+    },
+    "body-only" : {
+      "validateRequestBody" : true,
+      "validateRequestParameters" : false
+    }
+  },
+  "x-amazon-apigateway-request-validator" : "full",
+  "paths": {
+    "/orders": {
+      "post": {
+        "x-amazon-apigateway-request-validator": "body-only",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "Orders",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Orders"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/Message"
+            }
+          }
+        },
+        "x-amazon-apigateway-integration": {
+          "responses": {
+            "default": {
+              "statusCode": "200",
+              "responseTemplates": {
+                "application/json": "{\"message\" : \"Orders succesfully created\"}"
+              }
+            }
+          },
+          "requestTemplates": {
+            "application/json": "{\"statusCode\": 200}"
+          },
+          "passthroughBehavior": "never",
+          "type": "mock"
+        }
+      },
+      "get": {
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Account-Id",
+            "required": true
+          },          {
+            "in": "query",
+            "name": "type",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/Message"
+            }
+          }
+        },
+        "x-amazon-apigateway-integration": {
+          "responses": {
+            "default": {
+              "statusCode": "200",
+              "responseTemplates": {
+                "application/json": "[{\n   \"order-id\" : \"qrx987\",\n   \"type\" : \"STOCK\",\n   \"symbol\" : \"AMZN\",\n   \"shares\" : 100,\n   \"time\" : \"1488217405\",\n   \"state\" : \"COMPLETED\"\n},\n{\n   \"order-id\" : \"foo123\",\n   \"type\" : \"STOCK\",\n   \"symbol\" : \"BA\",\n   \"shares\" : 100,\n   \"time\" : \"1488213043\",\n   \"state\" : \"COMPLETED\"\n}\n]"
+              }
+            }
+          },
+          "requestTemplates": {
+            "application/json": "{\"statusCode\": 200}"
+          },
+          "passthroughBehavior": "never",
+          "type": "mock"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Orders": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "title": "Create Orders Schema",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "account-id",
+          "type",
+          "symbol",
+          "shares",
+          "details"
+        ],
+        "properties": {
+          "account_id": {
+            "type": "string",
+            "pattern": "[A-Za-z]{6}[0-9]{6}"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "STOCK",
+              "BOND",
+              "CASH"
+            ]
+          },
+          "symbol": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4
+          },
+          "shares": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "details": {
+            "type": "object",
+            "required": [
+              "limit"
+            ],
+            "properties": {
+              "limit": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      }
+    },
+    "Message": {
+      "type": "object",
+      "properties": {
+        "message" : {
+          "type" : "string"
+        }
+      }
+    }
+  }
+}
