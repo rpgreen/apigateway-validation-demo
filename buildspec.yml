@@ -1,0 +1,23 @@
+version: 0.1
+
+environment_variables:
+  plaintext:
+    API_ID: "gxz2yrq3sl"
+phases:
+  install:
+    commands:
+  pre_build:
+    commands:
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Updating API
+      - aws apigateway put-rest-api --rest-api-id gxz2yrq3sl --body "file://validation-swagger.json" --region us-west-2
+      - echo Deploying API
+      - aws apigateway create-deployment --rest-api-id gxz2yrq3sl --stage-name test --region us-west-2
+  post_build:
+    commands:
+      - echo Updated and deployed API at https://gxz2yrq3sl.execute-api.us-west-2.amazonaws.com/test/
+artifacts:
+  files:
+  discard-paths: yes
