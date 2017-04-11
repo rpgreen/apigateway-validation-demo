@@ -1,7 +1,8 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "API Gateway - Request Validation Demo - rpgreen@amazon.com"
+    "title": "API Gateway - Request Validation Demo - rpgreen@amazon.com",
+    "version" : "1.0"
   },
   "schemes": [
     "https"
@@ -38,12 +39,14 @@
           "200": {
             "schema": {
               "$ref": "#/definitions/Message"
-            }
+            },
+            "description" : "validation succeeded"
           },
           "400" : {
             "schema": {
               "$ref": "#/definitions/Message"
-            }
+            },
+            "description" : "validation failed"
           }
         },
         "x-amazon-apigateway-integration": {
@@ -67,24 +70,28 @@
           {
             "in": "header",
             "name": "Account-Id",
-            "required": true
+            "required": true,
+            "type": "string"
           },
           {
             "in": "query",
             "name": "type",
-            "required": false
+            "required": false,
+            "type": "string"
           }
         ],
         "responses": {
           "200" : {
             "schema": {
               "$ref": "#/definitions/Orders"
-            }
+            },
+            "description" : "validation succeeded"
           },
           "400" : {
             "schema": {
               "$ref": "#/definitions/Message"
-            }
+            },
+            "description" : "validation failed"
           }
         },
         "x-amazon-apigateway-integration": {
@@ -107,7 +114,6 @@
   },
   "definitions": {
     "CreateOrders": {
-      "$schema": "http://json-schema.org/draft-04/schema#",
       "title": "Create Orders Schema",
       "type": "array",
       "minItems" : 1,
@@ -118,7 +124,6 @@
     },
     "Orders" : {
       "type": "array",
-      "$schema": "http://json-schema.org/draft-04/schema#",
       "title": "Get Orders Schema",
       "items": {
         "type": "object",
@@ -140,7 +145,6 @@
     },
     "Order" : {
       "type": "object",
-      "$schema": "http://json-schema.org/draft-04/schema#",
       "title": "Schema for a single Order",
       "required": [
         "account-id",
